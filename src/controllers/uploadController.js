@@ -16,7 +16,7 @@ let storage = multer.diskStorage({
       return callback(message, null);
     }
 
-    var filename = `${file.originalname}`;
+    let filename = `${file.originalname}`;
     callback(null, filename);
   },
 });
@@ -31,12 +31,13 @@ const multipleUploads = async (req, res) => {
       return res.send(`You must select at least 1 file.`);
     }
 
-    await req.files.forEach(imgElement => {
+    await req.files.forEach((imgElement) => {
       const newImage = new Image(getImageObject(imgElement));
       const createdImage = newImage.save();
     });
 
     return res.send("File(s) succesfully uploaded");
+  
   } catch (error) {
     if (error.code === "LIMIT_UNEXPECTED_FILE") {
       return res.send("Too many files to upload.");
@@ -47,7 +48,7 @@ const multipleUploads = async (req, res) => {
 };
 
 const getImageObject = (image) => {
-  return newImageObject = {
+  return (newImageObject = {
     title: image.filename,
     img: {
       data: fs.readFileSync(
@@ -55,8 +56,8 @@ const getImageObject = (image) => {
       ),
       contentType: "image/png",
     },
-  };
-}
+  });
+};
 
 module.exports = {
   multipleUploads: multipleUploads,
