@@ -1,6 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 const util = require("util");
+const ImageModel = require("../models/Image");
+const fs = require("fs");
 
 let storage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -14,7 +16,7 @@ let storage = multer.diskStorage({
       return callback(message, null);
     }
 
-    var filename = `${Date.now()}${file.originalname}`;
+    var filename = `${file.originalname}`;
     callback(null, filename);
   },
 });
@@ -25,25 +27,48 @@ let uploadFilesHelper = util.promisify(uploadFiles);
 const multipleUploads = async (req, res) => {
   try {
     await uploadFilesHelper(req, res);
-
-    console.log(req.files);
-
     if (req.files.length <= 0) {
       return res.send(`You must select at least 1 file.`);
     }
 
-    return res.send(`File(s) uploaded.`);
+    //console.log("Size " + req.files.length);
+    //console.log(req.files[0].fieldname);
+    //console.log(req.files[0].filename);
+    //console.log("PATH: " + path.join(`${__dirname}/../../upload`));
+    req.files.forEach(imgElement => {
+      console.log(imgElement)
+      let newImage = createNewImageModel(imgElement);
+      ImageModel.create(newImage, (err, item) => {
+        if (err) {
+          console.log(err);
+        } else {
+          item.save();
+        }
+      });
+    });
 
+    return res.send("File(s) succesfully uploaded");
   } catch (error) {
-    console.log(error);
-
     if (error.code === "LIMIT_UNEXPECTED_FILE") {
       return res.send("Too many files to upload.");
     }
+    console.log(error);
     return res.send(`Error when trying upload many files: ${error}`);
   }
 };
 
+const createNewImageModel = (image) => {
+  return newImage = {
+    title: image.filename,
+    img: {
+      data: fs.readFileSync(
+        path.join(`${__dirname}/../../upload/` + image.filename)
+      ),
+      contentType: "image/png",
+    },
+  };
+}
+
 module.exports = {
-    multipleUploads: multipleUploads
+  multipleUploads: multipleUploads,
 };
