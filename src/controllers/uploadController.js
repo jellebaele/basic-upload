@@ -1,7 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const util = require("util");
-const ImageModel = require("../models/Image");
+const Image = require("../models/Image");
 const fs = require("fs");
 
 let storage = multer.diskStorage({
@@ -12,7 +12,7 @@ let storage = multer.diskStorage({
     const match = ["image/png", "image/jpeg"];
 
     if (match.indexOf(file.mimetype) === -1) {
-      var message = `<strong>${file.originalname}</strong> is invalid. Only accept png/jpeg.`;
+      var message = `<strong>${file.originalname}</strong> is invalid. Only .png/.jpeg files are accepted`;
       return callback(message, null);
     }
 
@@ -31,20 +31,9 @@ const multipleUploads = async (req, res) => {
       return res.send(`You must select at least 1 file.`);
     }
 
-    //console.log("Size " + req.files.length);
-    //console.log(req.files[0].fieldname);
-    //console.log(req.files[0].filename);
-    //console.log("PATH: " + path.join(`${__dirname}/../../upload`));
-    req.files.forEach(imgElement => {
-      console.log(imgElement)
-      let newImage = createNewImageModel(imgElement);
-      ImageModel.create(newImage, (err, item) => {
-        if (err) {
-          console.log(err);
-        } else {
-          item.save();
-        }
-      });
+    await req.files.forEach(imgElement => {
+      const newImage = new Image(getImageObject(imgElement));
+      const createdImage = newImage.save();
     });
 
     return res.send("File(s) succesfully uploaded");
@@ -53,12 +42,12 @@ const multipleUploads = async (req, res) => {
       return res.send("Too many files to upload.");
     }
     console.log(error);
-    return res.send(`Error when trying upload many files: ${error}`);
+    return res.send(`Error when trying to upload: ${error}`);
   }
 };
 
-const createNewImageModel = (image) => {
-  return newImage = {
+const getImageObject = (image) => {
+  return newImageObject = {
     title: image.filename,
     img: {
       data: fs.readFileSync(
