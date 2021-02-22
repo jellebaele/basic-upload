@@ -7,6 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Node.js upload multiple files</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link type="test/css" href="css/style.css">
   <style>
     div.preview-images>img {
       width: 30%;
@@ -23,17 +24,14 @@
 					<%=image.img.data.toString('base64')%>">
                     <div>
                         <h5>
-                            <%= image.name %>
+                            <%= image.title %>
                         </h5>
-
-
-                        <p>
-                            <%= image.desc %>
-                        </p>
-
-
+                        <button type="button" class="btn btn-danger" id="<%= image._id %>" onclick="deleteHandler(this)">Delete</button>
                     </div>
+                    
                 </div>
             </div>
             <% }) %>
     </div>
+
+<script src="/js/uploads.js"></script>

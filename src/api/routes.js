@@ -19,4 +19,14 @@ router.get("/uploads", (req, res) => {
   });
 });
 
+router.delete("/uploads/:postId", async (req, res) => {
+  try {
+    console.log(req.params.postId);
+    const removedPost = await ImageModel.deleteOne({ _id: req.params.postId});
+    res.json(removedPost);
+  } catch (error) {
+    res.json({ message: error });
+  }
+});
+
 module.exports = router;
