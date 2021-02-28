@@ -8,4 +8,6 @@ router.get("/uploads", (req, res) => {
   res.json({ test: "Succes" });
 });
 
+router.post("/uploads")
+
 module.exports = router;

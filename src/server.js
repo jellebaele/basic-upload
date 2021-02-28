@@ -9,6 +9,16 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+mongoose.connect(
+  process.env.DATABASE_URL,
+  {
+      useUnifiedTopology: true, 
+      useNewUrlParser: true
+  },
+  () => console.log('Connected to db')
+)
+
 app.use(routes);
 
 const port = process.env.PORT || "3000";
