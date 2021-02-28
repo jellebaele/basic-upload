@@ -1,7 +1,11 @@
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
-    res.render("index.ejs");
-})
+    res.send("<h1>Server API - Client side rendering</h1>");
+  });
+
+router.get("/uploads", (req, res) => {
+  res.json({ test: "Succes" });
+});
 
 module.exports = router;
