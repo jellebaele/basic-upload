@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload</title>
+</head>
+
+<!--MIME type = mutipart/form-data instead of "text" 
+    to let the browser know that a lot of data will be
+    sent and special handling is required-->
+
+<body>
+    <form id="myform" method="post" enctype="multipart/form-data">
+        <label for="category">Category:</label><br>
+        <input type="text" name="category">
+        <input type="file" name="myfile" id="myfile"><br>
+    </form>
+    <!-- Fetch API -->
+    <button id="submitFetch">Submit with Fetch API</button><br>
+    <button id="getImages">Get all images</button><br>
+
+    <script>
+        document.getElementById('submitFetch').addEventListener('click', () => {
+            var form = document.getElementById("myform");
+            var formData = new FormData(form);
+            fetch("http://localhost:3000/api/images", {
+                method: 'POST',
+                body: formData
+            })
+                .then(data => data.json())
+                .then(data => {
+                    console.log(data);
+
+                    const img = document.createElement("img");
+                    img.src = data.image.img.path
+
+                    document.body.appendChild(img);
+                });
+        });
+
+        document.getElementById('getImages').addEventListener('click', () => {
+            fetch("http://localhost:3000/api/images")
+                .then(data => data.json())
+                .then(data => {
+                    data.forEach(image => {
+                        const img = document.createElement("img");
+                        img.src = "http://localhost:3000/" + image.img.path;
+                        
+                        const category = document.createElement("div")
+                        category.innerHTML = "Category: " + image.category;
+
+                        document.body.appendChild(img);
+                        document.body.appendChild(category);
+                    });
+                });
+        })
+    </script>
+</body>
+
+</html>

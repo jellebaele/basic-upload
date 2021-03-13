@@ -5,12 +5,14 @@ const ImageSchema = new Schema({
   title: {
     type: String,
   },
-  img: 
-  {
-      data: Buffer,
-      contentType: String,
+  img: {
+    path: String,
+  },
+  category: {
+    type: String,
+    default: 'uncategorised'
   }
 });
 
-const image = mongoose.model('Image', ImageSchema);
+const image = mongoose.model("Image", ImageSchema);
 module.exports = image;
